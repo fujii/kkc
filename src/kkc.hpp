@@ -1,11 +1,18 @@
 #include <list>
+#include <string>
+#include <map>
 
 namespace kkc {
     
     class Char {
-	int c;
+	unsigned int c;
     };
-    class String {};
+    class String : std::basic_string<Char> {
+    public:
+	String() : std::basic_string<Char>() {};
+	String(const Char* p, size_t len) : std::basic_string<Char>(p, len) {};
+	static String from_utf8(std::string);
+    };
 
     class SubString {
     public:
@@ -21,22 +28,31 @@ namespace kkc {
 
     typedef unsigned int connect_id_t;
 
-    class Word {
-    public:
-	String reading;
+    struct Word {
+	String key;
 	connect_id_t left_id;
 	connect_id_t right_id;
 	int cost;
-	String string;
+	String value;
     };
 
     class Dict {
+    public:
+	void load(const char* filename);
 	std::list<Word> prefix_lookup(const SubString&) const;
 	std::list<Word> lookup(const SubString&) const;
+    private:
+	std::map<String, Word> map;
     };
 
     class Context {
+    public:	
+	Context();
+    private:
 	Dict dict;
+    };
+
+    class Matrix {
     };
 
     class Session {
