@@ -16,6 +16,7 @@ String String::from_utf8(std::string utf8)
     if (err)
 	return String();
     String result(buf, len/4);
+    free(buf);
     return result;
 }
 
@@ -27,8 +28,8 @@ void Dict::load(const char* filename)
     while (std::getline(f, line)) {
 	std::istringstream iss(line);
 
-	std::string col[4];
-	for (int i=0; i<4; i++)
+	std::string col[5];
+	for (int i=0; i<5; i++)
 	    std::getline(iss, col[i], ',');
 
 	String key = String::from_utf8(col[0]);
