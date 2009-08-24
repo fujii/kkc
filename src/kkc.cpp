@@ -38,7 +38,7 @@ void Dict::load(const char* filename)
 	String value = String::from_utf8(col[4]);
 
 	Word word = {key, left_id, right_id, cost, value};
-	//map[key] = word;
+	map[key] = word;
     }
 }
 

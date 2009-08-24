@@ -3,11 +3,15 @@
 #include <map>
 
 namespace kkc {
-    
+
     class Char {
+    public:
+	bool operator< (const Char& x) const { return c < x.c; }
+    private:
 	unsigned int c;
     };
-    class String : std::basic_string<Char> {
+
+    class String : public std::basic_string<Char> {
     public:
 	String() : std::basic_string<Char>() {};
 	String(const Char* p, size_t len) : std::basic_string<Char>(p, len) {};
