@@ -24,7 +24,7 @@ namespace kkc {
 	SubString(const Char* begin, const size_t length) : begin_(begin), end_(begin + length) {};
 	const Char* begin() const { return begin_; }
 	const Char* end() const { return end_; }
-	size_t lenght() const { return end_ - begin_; }
+	size_t length() const { return end_ - begin_; }
     private:
 	const Char* begin_;
 	const Char* end_;
@@ -32,7 +32,12 @@ namespace kkc {
 
     typedef unsigned int connect_id_t;
 
-    struct Word {
+    class Word {
+    public:
+	Word() {}
+	Word(const Word& x) : key(x.key), left_id(x.left_id), right_id(x.right_id), cost(x.cost), value(x.value) {}
+	Word(String key_, connect_id_t left_id_, connect_id_t right_id_, int cost_, String value_)
+	    : key(key_), left_id(left_id_), right_id(right_id_), cost(cost_), value(value_) {}
 	String key;
 	connect_id_t left_id;
 	connect_id_t right_id;
@@ -46,14 +51,20 @@ namespace kkc {
 	std::list<Word> prefix_lookup(const SubString&) const;
 	std::list<Word> lookup(const SubString&) const;
     private:
-	std::map<String, Word> map;
+	std::map<String, std::list<Word> > map;
     };
 
     class Context {
     public:	
 	Context();
+	Dict& dict() { return dict_; };
     private:
-	Dict dict;
+	Dict dict_;
+    };
+
+    class Lattice {
+    public:
+	Lattice(size_t size);
     };
 
     class Matrix {
@@ -61,9 +72,10 @@ namespace kkc {
 
     class Session {
     public:
-	Session(String reading_) : reading(reading_) {};
+	Session(Context ctx, String reading_);
     private:
 	const String reading;
+	Lattice lattice;
     };
 
 }
