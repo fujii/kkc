@@ -15,9 +15,11 @@ namespace kkc {
     class String : public std::basic_string<Char> {
     public:
 	String() : std::basic_string<Char>() {};
+	String(std::wstring w) : std::basic_string<Char>((Char*) w.c_str(), w.length()) {};
 	String(const Char* p, size_t len) : std::basic_string<Char>(p, len) {};
 	String(std::basic_string<Char> b) : std::basic_string<Char>(b) {};
 	static String from_utf8(std::string);
+	operator std::wstring() const { return std::wstring((wchar_t*) c_str(), length());};
     };
 
     class SubString {

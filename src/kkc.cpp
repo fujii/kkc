@@ -78,8 +78,8 @@ void Session::lookup()
 {
     const Char *r = reading.c_str();
     for (int s=0; s<length; s++) {
-	for (int e=s+1; e<length; e++) {
-	    SubString ss(r+s, r+e);
+	for (int e=s; e<length; e++) {
+	    SubString ss(r+s, r+e+1);
 	    lattice[s][e] = ctx.dict().lookup(ss);
 	}
     }
@@ -87,16 +87,17 @@ void Session::lookup()
 
 void Session::search()
 {
-    for (int i=1; i<length; i++) {
+    for (int i=0; i<length; i++) {
 	int min_cost, min_j;
-	min_j = i - 1;
-	min_cost = cost[i - 1] + 1;
-	for (int j=0; j<i-1; j++) {
+	min_j = i;
+	min_cost = i == 0 ? 1 : cost[i-1] + 1;
+	for (int j=0; j<i; j++) {
 	    std::list<Word> words = lattice[j][i];
 	    if (!words.empty()) {
-		if (min_cost > cost[j] + 1) {
+		int c = j == 0 ? 1 : cost[j-1] + 1;
+		if (min_cost > c) {
 		    min_j = j;
-		    min_cost = cost[j] + 1;
+		    min_cost = c;
 		}
 	    }
 	}
@@ -109,11 +110,11 @@ String Session::sentence() const
 {
     String s;
     int j;
-    for (int i = length - 1; i>0; i=j) {
+    for (int i = length - 1; i>=0; i=j-1) {
 	j = path[i];
 	std::list<Word> words = lattice[j][i];
 	if (words.empty()) {
-	    s = reading.substr(j, i-j) + s;
+	    s = reading.substr(j, i-j+1) + s;
 	} else {
 	    s = words.front().value + s;
 	}
@@ -125,11 +126,12 @@ String Session::sentence() const
 
 int main()
 {
+    std::locale::global(std::locale(""));
     kkc::Context ctx;
-    std::string utf8;
-    std::cin >> utf8;
-    kkc::String s(kkc::String::from_utf8(utf8));
+    std::wstring input;
+    std::wcin >> input;
+    kkc::String s(input);
     kkc::Session session(ctx, s);
-    std::cout << "Hello world!" << std::endl;
+    std::wcout << (std::wstring)session.sentence() << std::endl;
     return 0;
 }
