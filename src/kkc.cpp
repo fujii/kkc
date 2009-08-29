@@ -62,18 +62,63 @@ Lattice::Lattice(size_t size)
 {
 }
 
-Session::Session(Context ctx, String reading_)
-    : reading(reading_)
-    , lattice(reading_.length())
+Session::Session(Context& ctx_, String reading_)
+    : ctx(ctx_)
+    , reading(reading_)
+    , length(reading_.length())
+    , lattice(length, std::vector<std::list<Word> >(length))
+    , cost(length)
+    , path(length)
+{
+    lookup();
+    search();
+}
+
+void Session::lookup()
 {
     const Char *r = reading.c_str();
-    int length = reading.length();
     for (int s=0; s<length; s++) {
 	for (int e=s+1; e<length; e++) {
 	    SubString ss(r+s, r+e);
-	    ctx.dict().lookup(ss);
+	    lattice[s][e] = ctx.dict().lookup(ss);
 	}
     }
+}
+
+void Session::search()
+{
+    for (int i=1; i<length; i++) {
+	int min_cost, min_j;
+	min_j = i - 1;
+	min_cost = cost[i - 1] + 1;
+	for (int j=0; j<i-1; j++) {
+	    std::list<Word> words = lattice[j][i];
+	    if (!words.empty()) {
+		if (min_cost > cost[j] + 1) {
+		    min_j = j;
+		    min_cost = cost[j] + 1;
+		}
+	    }
+	}
+	cost[i] = min_cost;
+	path[i] = min_j;
+    }
+}
+
+String Session::sentence() const
+{
+    String s;
+    int j;
+    for (int i = length - 1; i>0; i=j) {
+	j = path[i];
+	std::list<Word> words = lattice[j][i];
+	if (words.empty()) {
+	    s = reading.substr(j, i-j) + s;
+	} else {
+	    s = words.front().value + s;
+	}
+    }
+    return s;
 }
 
 }

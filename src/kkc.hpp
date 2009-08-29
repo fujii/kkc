@@ -1,6 +1,7 @@
 #include <list>
 #include <string>
 #include <map>
+#include <vector>
 
 namespace kkc {
 
@@ -15,6 +16,7 @@ namespace kkc {
     public:
 	String() : std::basic_string<Char>() {};
 	String(const Char* p, size_t len) : std::basic_string<Char>(p, len) {};
+	String(std::basic_string<Char> b) : std::basic_string<Char>(b) {};
 	static String from_utf8(std::string);
     };
 
@@ -72,10 +74,17 @@ namespace kkc {
 
     class Session {
     public:
-	Session(Context ctx, String reading_);
+	Session(Context& ctx, String reading_);
+	String sentence() const;
     private:
+	void lookup();
+	void search();
+	Context& ctx;
 	const String reading;
-	Lattice lattice;
+	size_t length;
+	std::vector<std::vector<std::list<Word> > > lattice;
+	std::vector<int> cost;
+	std::vector<int> path;
     };
 
 }
