@@ -7,7 +7,7 @@
 
 namespace kkc {
 
-String String::from_utf8(std::string utf8)
+String from_utf8(std::string utf8)
 {
     Char* buf;
     size_t len;
@@ -32,11 +32,11 @@ void Dict::load(const char* filename)
 	for (int i=0; i<5; i++)
 	    std::getline(iss, col[i], ',');
 
-	String key = String::from_utf8(col[0]);
+	String key = from_utf8(col[0]);
 	connect_id_t left_id = atoi(col[1].c_str());
 	connect_id_t right_id = atoi(col[2].c_str());
 	int cost = atoi(col[3].c_str());
-	String value = String::from_utf8(col[4]);
+	String value = from_utf8(col[4]);
 
 	Word word(key, left_id, right_id, cost, value);
 	map[key].push_back(word);
@@ -128,10 +128,9 @@ int main()
 {
     std::locale::global(std::locale(""));
     kkc::Context ctx;
-    std::wstring input;
+    kkc::String input;
     std::wcin >> input;
-    kkc::String s(input);
-    kkc::Session session(ctx, s);
-    std::wcout << (std::wstring)session.sentence() << std::endl;
+    kkc::Session session(ctx, input);
+    std::wcout << session.sentence() << std::endl;
     return 0;
 }
