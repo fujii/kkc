@@ -129,8 +129,9 @@ int main()
     std::locale::global(std::locale(""));
     kkc::Context ctx;
     kkc::String input;
-    std::wcin >> input;
-    kkc::Session session(ctx, input);
-    std::wcout << session.sentence() << std::endl;
+    while (std::getline(std::wcin, input)) {
+	kkc::Session session(ctx, input);
+	std::wcout << session.sentence() << std::endl;
+    }
     return 0;
 }
