@@ -53,7 +53,7 @@ int convert_text(iconv_t cd,
 
 int convert_utf8_to_ucs4(const char *str, char **outbuf, size_t *outlen)
 {
-    iconv_t cd = iconv_open("UCS-4", "UTF-8");
+    iconv_t cd = iconv_open("UCS-4LE", "UTF-8");
     if (cd == iconv_t(-1))
 	return -1;
     int err = convert_text(cd, const_cast<char*>(str), strlen(str), outbuf, outlen);
@@ -63,7 +63,7 @@ int convert_utf8_to_ucs4(const char *str, char **outbuf, size_t *outlen)
 
 int convert_eucjp_to_ucs4(const char *str, char **outbuf, size_t *outlen)
 {
-    iconv_t cd = iconv_open("UCS-4", "EUC-JP");
+    iconv_t cd = iconv_open("UCS-4LE", "EUC-JP");
     if (cd == iconv_t(-1))
 	return -1;
     int err = convert_text(cd, const_cast<char*>(str), strlen(str), outbuf, outlen);
@@ -73,7 +73,7 @@ int convert_eucjp_to_ucs4(const char *str, char **outbuf, size_t *outlen)
 
 int convert_ucs4_to_utf8(const char *str, size_t str_len, char **outbuf, size_t *outlen)
 {
-    iconv_t cd = iconv_open("UTF-8", "UCS-4");
+    iconv_t cd = iconv_open("UTF-8", "UCS-4LE");
     if (cd == iconv_t(-1))
 	return -1;
     int err = convert_text(cd, const_cast<char*>(str), str_len, outbuf, outlen);
