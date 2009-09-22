@@ -44,20 +44,28 @@ namespace kkc {
 	std::map<String, std::list<Word> > map;
     };
 
+    class Matrix {
+    public:
+	void load(const char* filename);
+	int item(connect_id_t right, connect_id_t left);
+    private:
+	std::vector<int> matrix;
+	size_t n_right_id, n_left_id;
+    };
+
     class Context {
     public:	
 	Context();
 	Dict& dict() { return dict_; };
+	Matrix& matrix() { return matrix_; };
     private:
 	Dict dict_;
+	Matrix matrix_;
     };
 
     class Lattice {
     public:
 	Lattice(size_t size);
-    };
-
-    class Matrix {
     };
 
     class Session {
