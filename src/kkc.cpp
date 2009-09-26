@@ -96,8 +96,8 @@ Session::Session(Context& ctx_, String reading_)
 void Session::lookup()
 {
     const Char *r = reading.c_str();
-    for (int s=0; s<length; s++) {
-	for (int e=s; e<length; e++) {
+    for (size_t s=0; s<length; s++) {
+	for (size_t e=s; e<length; e++) {
 	    SubString ss(r+s, r+e+1);
 	    lattice[s][e] = ctx.dict().lookup(ss);
 	}
@@ -106,11 +106,11 @@ void Session::lookup()
 
 void Session::search()
 {
-    for (int i=0; i<length; i++) {
+    for (size_t i=0; i<length; i++) {
 	int min_cost, min_j;
 	min_j = i;
 	min_cost = i == 0 ? 1 : cost[i-1] + 1;
-	for (int j=0; j<i; j++) {
+	for (size_t j=0; j<i; j++) {
 	    std::list<Word> words = lattice[j][i];
 	    if (!words.empty()) {
 		int c = j == 0 ? 1 : cost[j-1] + 1;
