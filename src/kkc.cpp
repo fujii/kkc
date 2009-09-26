@@ -53,6 +53,26 @@ std::list<Word> Dict::lookup(const SubString& ss) const
 	return iter->second;
 }
 
+template<class T>
+Matrix<T>::Matrix(Matrix::size_type n_row, Matrix::size_type n_col)
+    : n_row_(n_row)
+    , n_col_(n_col)
+{
+    matrix.resize(n_row * n_col);
+}
+
+template<class T>
+T& Matrix<T>::at(Matrix::size_type row, Matrix::size_type col)
+{
+    return matrix.at(row * n_col + col);
+}
+
+template<class T>
+void Matrix<T>::assign(size_type row, size_type col, const T& val)
+{
+    matrix.assgin(row * n_col + col, val);
+}
+
 void Connect::load(const char* filename)
 {
     std::ifstream f;

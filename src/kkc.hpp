@@ -44,7 +44,17 @@ namespace kkc {
 	std::map<String, std::list<Word> > map;
     };
 
-    class Matrix {
+    template<class T> class Matrix {
+    public:
+        typedef size_t size_type;
+        Matrix(size_type n_row, size_type n_col);
+        T& at(size_type row, size_type col);
+        void assign(size_type row, size_type col, const T& val);
+        size_type n_row();
+        size_type n_col();
+    private:
+        std::vector<T> matrix;
+        size_type n_row_, n_col_;
     };
 
     class Connect {
