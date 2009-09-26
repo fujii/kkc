@@ -54,9 +54,9 @@ std::list<Word> Dict::lookup(const SubString& ss) const
 }
 
 template<class T>
-Matrix<T>::Matrix(Matrix::size_type n_row, Matrix::size_type n_col)
-    : n_row_(n_row)
-    , n_col_(n_col)
+Matrix<T>::Matrix(Matrix::size_type n_row_, Matrix::size_type n_col_)
+    : n_row(n_row_)
+    , n_col(n_col_)
 {
     matrix.resize(n_row * n_col);
 }
@@ -67,28 +67,24 @@ T& Matrix<T>::at(Matrix::size_type row, Matrix::size_type col)
     return matrix.at(row * n_col + col);
 }
 
-template<class T>
-void Matrix<T>::assign(size_type row, size_type col, const T& val)
-{
-    matrix.assgin(row * n_col + col, val);
-}
-
 void Connect::load(const char* filename)
 {
     std::ifstream f;
     f.open(filename);
+    size_t n_right_id, n_left_id;
     f >> n_right_id >> n_left_id;
-    matrix.resize(n_right_id * n_left_id);
+    std::auto_ptr<Matrix<int> > t(new Matrix<int>(n_right_id, n_left_id));
+    matrix = t;
     size_t col, row;
     int cost;
     while (f >> row >> col >> cost) {
-	matrix[row * n_left_id + col] = cost;
+	matrix->at(row, col) = cost;
     }
 }
 
 int Connect::item(connect_id_t right, connect_id_t left)
 {
-    return matrix[right * n_left_id + left];
+    return matrix->at(right, left);
 }
 
 Context::Context()

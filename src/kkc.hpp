@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <memory>
 
 namespace kkc {
 
@@ -47,14 +48,11 @@ namespace kkc {
     template<class T> class Matrix {
     public:
         typedef size_t size_type;
-        Matrix(size_type n_row, size_type n_col);
+        Matrix(size_type n_row_, size_type n_col_);
         T& at(size_type row, size_type col);
-        void assign(size_type row, size_type col, const T& val);
-        size_type n_row();
-        size_type n_col();
+        size_type n_row, n_col;
     private:
         std::vector<T> matrix;
-        size_type n_row_, n_col_;
     };
 
     class Connect {
@@ -62,8 +60,7 @@ namespace kkc {
 	void load(const char* filename);
 	int item(connect_id_t right, connect_id_t left);
     private:
-	std::vector<int> matrix;
-	size_t n_right_id, n_left_id;
+        std::auto_ptr<Matrix<int> > matrix;
     };
 
     class Context {
