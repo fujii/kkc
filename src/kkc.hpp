@@ -58,7 +58,7 @@ namespace kkc {
     class Connect {
     public:
 	void load(const char* filename);
-	int item(connect_id_t right, connect_id_t left);
+	int at(connect_id_t right, connect_id_t left);
     private:
         std::auto_ptr<Matrix<int> > matrix;
     };

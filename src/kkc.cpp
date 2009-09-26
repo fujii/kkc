@@ -82,7 +82,7 @@ void Connect::load(const char* filename)
     }
 }
 
-int Connect::item(connect_id_t right, connect_id_t left)
+int Connect::at(connect_id_t right, connect_id_t left)
 {
     return matrix->at(right, left);
 }
