@@ -45,6 +45,9 @@ namespace kkc {
     };
 
     class Matrix {
+    };
+
+    class Connect {
     public:
 	void load(const char* filename);
 	int item(connect_id_t right, connect_id_t left);
@@ -57,10 +60,10 @@ namespace kkc {
     public:	
 	Context();
 	Dict& dict() { return dict_; };
-	Matrix& matrix() { return matrix_; };
+	Connect& connect() { return connect_; };
     private:
 	Dict dict_;
-	Matrix matrix_;
+	Connect connect_;
     };
 
     class Lattice {

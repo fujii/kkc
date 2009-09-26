@@ -53,7 +53,7 @@ std::list<Word> Dict::lookup(const SubString& ss) const
 	return iter->second;
 }
 
-void Matrix::load(const char* filename)
+void Connect::load(const char* filename)
 {
     std::ifstream f;
     f.open(filename);
@@ -66,7 +66,7 @@ void Matrix::load(const char* filename)
     }
 }
 
-int Matrix::item(connect_id_t right, connect_id_t left)
+int Connect::item(connect_id_t right, connect_id_t left)
 {
     return matrix[right * n_left_id + left];
 }
@@ -74,7 +74,7 @@ int Matrix::item(connect_id_t right, connect_id_t left)
 Context::Context()
 {
     dict_.load("dic.csv");
-    matrix_.load("matrix.def");
+    connect_.load("matrix.def");
 }
 
 Lattice::Lattice(size_t size)
