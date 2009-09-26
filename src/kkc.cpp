@@ -87,6 +87,16 @@ int Connect::at(connect_id_t right, connect_id_t left)
     return matrix->at(right, left);
 }
 
+int Connect::n_right_id()
+{
+    return matrix->n_row;
+}
+
+int Connect::n_left_id()
+{
+    return matrix->n_col;
+}
+
 Context::Context()
 {
     dict_.load("dic.csv");
@@ -102,8 +112,6 @@ Session::Session(Context& ctx_, String reading_)
     , reading(reading_)
     , length(reading_.length())
     , lattice(length, std::vector<std::list<Word> >(length))
-    , cost(length)
-    , path(length)
 {
     lookup();
     search();
@@ -120,41 +128,82 @@ void Session::lookup()
     }
 }
 
+struct Path {
+    Path* prev;
+    Word word;
+};
+
 void Session::search()
 {
-    for (size_t i=0; i<length; i++) {
-	int min_cost, min_j;
-	min_j = i;
-	min_cost = i == 0 ? 1 : cost[i-1] + 1;
-	for (size_t j=0; j<i; j++) {
-	    std::list<Word> words = lattice[j][i];
-	    if (!words.empty()) {
-		int c = j == 0 ? 1 : cost[j-1] + 1;
-		if (min_cost > c) {
-		    min_j = j;
-		    min_cost = c;
-		}
-	    }
-	}
-	cost[i] = min_cost;
-	path[i] = min_j;
+    size_t n_right_id = ctx.connect().n_right_id();
+    Matrix<std::pair<int, Path> > cost_path(length, n_right_id);
+    for (size_t e=0; e<length; e++) {
+	for (size_t s=0; s<=e; s++) {
+	    std::list<Word> words = lattice[s][e];
+            for (std::list<Word>::iterator iter = words.begin(); iter != words.end(); iter++) {
+                Word& word = *iter;
+                if (s == 0) {
+                    int cost2 = ctx.connect().at(0, word.left_id);
+                    int cost3 = word.cost;
+                    int cost = cost2 + cost3;
+                    if (cost_path.at(e, word.right_id).first == 0
+                        || cost_path.at(e, word.right_id).first > cost) {
+                        cost_path.at(e, word.right_id).first = cost;
+                        cost_path.at(e, word.right_id).second.prev = 0;
+                        cost_path.at(e, word.right_id).second.word = word;
+                    }
+                } else {
+                    for (size_t r=0; r<n_right_id; r++) {
+                        int cost1 = cost_path.at(s-1, r).first;
+                        if (!cost1)
+                            continue;
+                        int cost2 = ctx.connect().at(r, word.left_id);
+                        int cost3 = word.cost;
+                        int cost = cost1 + cost2 + cost3;
+                        if (cost_path.at(e, word.right_id).first == 0
+                            || cost_path.at(e, word.right_id).first > cost) {
+                            cost_path.at(e, word.right_id).first = cost;
+                            cost_path.at(e, word.right_id).second.prev = &cost_path.at(s-1, r).second;
+                            cost_path.at(e, word.right_id).second.word = word;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    int min_cost = 0;
+    Path min_path;
+    for (size_t r=0; r<n_right_id; r++) {
+        size_t s = length;
+        int cost1 = cost_path.at(s-1, r).first;
+        if (!cost1)
+            continue;
+        int cost2 = ctx.connect().at(r, 0);
+        int cost = cost1 + cost2;
+        if (min_cost == 0
+            || min_cost > cost) {
+            min_cost = cost;
+            min_path.prev = &cost_path.at(s-1, r).second;
+            min_path.word = Word();
+        }
+    }
+
+    if (min_cost) {
+        String s;
+        Path* p = &min_path;
+        while (p) {
+            s = p->word.value + s;
+            p = p->prev;
+        }
+        sentence_ = s;
+    } else {
+        sentence_ = String(L"No path");
     }
 }
 
 String Session::sentence() const
 {
-    String s;
-    int j;
-    for (int i = length - 1; i>=0; i=j-1) {
-	j = path[i];
-	std::list<Word> words = lattice[j][i];
-	if (words.empty()) {
-	    s = reading.substr(j, i-j+1) + s;
-	} else {
-	    s = words.front().value + s;
-	}
-    }
-    return s;
+    return sentence_;
 }
 
 }

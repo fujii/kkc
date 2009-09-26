@@ -59,6 +59,8 @@ namespace kkc {
     public:
 	void load(const char* filename);
 	int at(connect_id_t right, connect_id_t left);
+        int n_right_id();
+        int n_left_id();
     private:
         std::auto_ptr<Matrix<int> > matrix;
     };
@@ -89,8 +91,8 @@ namespace kkc {
 	const String reading;
 	size_t length;
 	std::vector<std::vector<std::list<Word> > > lattice;
-	std::vector<int> cost;
-	std::vector<int> path;
+
+        String sentence_;
     };
 
 }
