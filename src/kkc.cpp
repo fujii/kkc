@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
+#include <assert.h>
 
 namespace kkc {
 
@@ -47,10 +48,12 @@ std::list<Word> Dict::lookup(const SubString& ss) const
 {
     String key(ss.begin(), ss.length());
     std::map<String, std::list<Word> >::const_iterator iter = map.find(key);
-    if (iter == map.end())
-	return std::list<Word>();
-    else
-	return iter->second;
+    std::list<Word> words;
+    if (iter != map.end())
+	words = iter->second;
+    Word unknown(key, 10, 10, 8000 * key.length(), key); // TODO: Read unk.def
+    words.push_back(unknown);
+    return words;
 }
 
 template<class T>
@@ -140,6 +143,7 @@ void Session::search()
     for (size_t e=0; e<length; e++) {
 	for (size_t s=0; s<=e; s++) {
 	    std::list<Word> words = lattice[s][e];
+            assert(!words.empty());
             for (std::list<Word>::iterator iter = words.begin(); iter != words.end(); iter++) {
                 Word& word = *iter;
                 if (s == 0) {
@@ -188,7 +192,8 @@ void Session::search()
         }
     }
 
-    if (min_cost) {
+    assert(min_cost != 0);
+    {
         String s;
         Path* p = &min_path;
         while (p) {
@@ -196,8 +201,6 @@ void Session::search()
             p = p->prev;
         }
         sentence_ = s;
-    } else {
-        sentence_ = String(L"No path");
     }
 }
 
